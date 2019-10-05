@@ -17,10 +17,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/bg_search"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -29,10 +29,10 @@
                 android:id="@+id/iv_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_arrow_back_white_24dp" />
 
             <EditText
@@ -52,10 +52,10 @@
                 android:id="@+id/iv_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_close_white_24dp"
                 android:visibility="gone" />
 
@@ -63,10 +63,10 @@
                 android:id="@+id/iv_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_search_white_24dp" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
@@ -165,23 +165,12 @@
                     app:vertical_interval="5dp" />
             </LinearLayout>
         </ScrollView>
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/layout_tab"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="?attr/colorPrimary"
-                app:tabIndicatorColor="#fff"
-                app:tabIndicatorHeight="2dp"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="#fff"
-                app:tabTextColor="#fff" />
-        </androidx.viewpager.widget.ViewPager>
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progress"

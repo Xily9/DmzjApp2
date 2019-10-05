@@ -1,11 +1,10 @@
 package com.xily.dmzj2.ui.info
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.transition.Transition
 import android.view.MenuItem
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
@@ -21,18 +20,19 @@ import com.bumptech.glide.request.target.Target
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import com.xily.dmzj2.data.remote.model.ComicBean
+import com.xily.dmzj2.ui.read.ReadActivity
 import com.xily.dmzj2.utils.*
 import kotlinx.android.synthetic.main.activity_info.*
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class InfoActivity : BaseActivity() {
-    private var id = 38334//TODO
+    private var id = 0
     private lateinit var adapter: ChaptersAdapter
     private var isBitmapLoaded = false
-    private val infoViewModel: InfoViewModel by inject()
+    private val infoViewModel: InfoViewModel by viewModel()
     override fun getLayoutId(): Int {
         return R.layout.activity_info
     }
@@ -54,7 +54,7 @@ class InfoActivity : BaseActivity() {
         val height = dp2px(200f) - actionbarSizeTypedArray.getDimension(0, 0f) - statusBarHeight
         actionbarSizeTypedArray.recycle()
         debug(msg = height.toInt())
-        //id = intent.getIntExtra("id", 0)
+        id = intent.getIntExtra("id", 0)
         val bytes = intent.getByteArrayExtra("bitmap")
         if (bytes != null && bytes.isNotEmpty()) {
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -66,7 +66,25 @@ class InfoActivity : BaseActivity() {
             val alpha = (scrollY / (height) * 255).toInt()
             toolbar.background.mutate().alpha = if (alpha > 255) 255 else alpha
         }
-        loadData()
+        window.sharedElementEnterTransition.addListener(object :
+            Transition.TransitionListener {
+            override fun onTransitionEnd(transition: Transition?) {
+                loadData()
+            }
+
+            override fun onTransitionResume(transition: Transition?) {
+            }
+
+            override fun onTransitionPause(transition: Transition?) {
+            }
+
+            override fun onTransitionCancel(transition: Transition?) {
+            }
+
+            override fun onTransitionStart(transition: Transition?) {
+            }
+
+        })
     }
 
     /* private fun initViewPager() {
@@ -96,7 +114,7 @@ class InfoActivity : BaseActivity() {
             val bundle = Bundle()
             bundle.putInt("comicId", id)
             bundle.putInt("chapterId", adapter.currentList[position].chapter_id)
-            //startActivity<ReadActivity>(bundle)
+            startActivity<ReadActivity>(bundle)
         }
         recycle_chapter.layoutManager = GridLayoutManager(this, 4)
         recycle_chapter.adapter = adapter

@@ -15,7 +15,9 @@ val dbModule = module {
         Room.databaseBuilder(
             androidApplication(),
             RoomDatabase::class.java, "dmzj2"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     factory {

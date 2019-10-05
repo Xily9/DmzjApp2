@@ -1,8 +1,8 @@
 package com.xily.dmzj2
 
 import android.app.Application
-import com.xily.dmzj2.di.module.dataModule
 import com.xily.dmzj2.di.module.appModule
+import com.xily.dmzj2.di.module.dataModule
 import com.xily.dmzj2.di.module.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

@@ -2,12 +2,12 @@ package com.xily.dmzj2.base
 
 import android.content.Context
 import android.view.LayoutInflater
-import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.DiffUtil
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -25,7 +25,8 @@ abstract class BaseListAdapter<T, V : ViewDataBinding>(
         private set
     private var onItemClickListener: ((position: Int) -> Unit?)? = null
     private var onItemLongClickListener: ((position: Int) -> Boolean?)? = null
-
+    private var onItemClickListener2: ((position: Int, viewDataBinding: V) -> Unit?)? = null
+    private var onItemLongClickListener2: ((position: Int, viewDataBinding: V) -> Boolean?)? = null
     fun setOnItemClickListener(onItemClickListener: (position: Int) -> Unit) {
         this.onItemClickListener = onItemClickListener
     }
@@ -34,6 +35,13 @@ abstract class BaseListAdapter<T, V : ViewDataBinding>(
         this.onItemLongClickListener = onItemLongClickListener
     }
 
+    fun setOnItemLongClickListener(onItemLongClickListener: (position: Int, viewDataBinding: V) -> Boolean) {
+        this.onItemLongClickListener2 = onItemLongClickListener
+    }
+
+    fun setOnItemClickListener(onItemClickListener: (position: Int, viewDataBinding: V) -> Unit) {
+        this.onItemClickListener2 = onItemClickListener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<V> {
         context = parent.context
@@ -43,7 +51,7 @@ abstract class BaseListAdapter<T, V : ViewDataBinding>(
             parent,
             false
         )
-        val holder=BaseViewHolder(binding)
+        val holder = BaseViewHolder(binding)
         onItemClickListener?.let {
             holder.itemView.setOnClickListener {
                 onItemClickListener?.invoke(holder.adapterPosition)
@@ -52,6 +60,16 @@ abstract class BaseListAdapter<T, V : ViewDataBinding>(
         onItemLongClickListener?.let {
             holder.itemView.setOnLongClickListener {
                 onItemLongClickListener?.invoke(holder.adapterPosition) ?: false
+            }
+        }
+        onItemClickListener2?.let {
+            holder.itemView.setOnClickListener {
+                onItemClickListener2?.invoke(holder.adapterPosition, binding)
+            }
+        }
+        onItemLongClickListener2?.let {
+            holder.itemView.setOnLongClickListener {
+                onItemLongClickListener2?.invoke(holder.adapterPosition, binding) ?: false
             }
         }
         return holder

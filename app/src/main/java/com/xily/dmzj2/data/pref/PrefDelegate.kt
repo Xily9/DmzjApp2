@@ -1,6 +1,5 @@
 package com.xily.dmzj2.data.pref
 
-import android.content.SharedPreferences
 import android.util.Base64
 import androidx.preference.PreferenceManager
 import com.xily.dmzj2.App
@@ -12,7 +11,7 @@ import kotlin.reflect.KProperty
  */
 class PrefDelegate<T>(private val default: T) {
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val name = property.name
         with(sharedPreferences) {
@@ -22,9 +21,7 @@ class PrefDelegate<T>(private val default: T) {
                 is Boolean -> getBoolean(name, default)
                 is Float -> getFloat(name, default)
                 is Long -> getLong(name, default)
-                is Serializable -> strToObj(getString(name, ""))
-                        ?: default
-                else -> getString(name, null)
+                else -> strToObj(getString(name, "")) ?: default
             } as T
         }
     }

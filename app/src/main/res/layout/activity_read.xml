@@ -19,5 +19,5 @@
 
     <include
         layout="@layout/layout_toolbar"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 </FrameLayout>

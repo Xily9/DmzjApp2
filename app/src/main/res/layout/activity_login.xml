@@ -52,7 +52,7 @@
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.xily.dmzj.weight.LoginButtonView
+        <com.xily.dmzj2.view.LoginButtonView
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"

@@ -1,5 +1,7 @@
 package com.xily.dmzj2.base
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
@@ -39,5 +41,27 @@ abstract class BaseViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    fun <T> getData(block: suspend CoroutineScope.() -> T): LiveData<T> {
+        val result = MutableLiveData<T>()
+        launch(tryBlock = {
+            result.value = block()
+        }, catchBlock = {
+            it.printStackTrace()
+            result.value = null
+        })
+        return result
+    }
+
+    fun <T> getResultData(block: suspend CoroutineScope.() -> Result<T>): LiveData<Result<T>> {
+        val result = MutableLiveData<Result<T>>()
+        launch(tryBlock = {
+            result.value = block()
+        }, catchBlock = {
+            it.printStackTrace()
+            result.value = Result.failure(it)
+        })
+        return result
     }
 }

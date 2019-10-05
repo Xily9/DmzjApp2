@@ -7,5 +7,5 @@ import com.xily.dmzj2.data.remote.model.LoginBean
  */
 class SharedPreferencesHelper : PrefHelper {
     override var checkUpdate: Boolean by PrefDelegate(false)
-    override var UserData: LoginBean.Data? by PrefDelegate(null)
+    override var userData: LoginBean.Data? by PrefDelegate(null)
 }

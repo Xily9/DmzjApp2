@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class SearchHistory(var word: String) {
-    @PrimaryKey var id: Int=0
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 }

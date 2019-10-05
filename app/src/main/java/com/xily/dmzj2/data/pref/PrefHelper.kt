@@ -7,5 +7,5 @@ import com.xily.dmzj2.data.remote.model.LoginBean
  */
 interface PrefHelper {
     var checkUpdate: Boolean
-    var UserData: LoginBean.Data?
+    var userData: LoginBean.Data?
 }

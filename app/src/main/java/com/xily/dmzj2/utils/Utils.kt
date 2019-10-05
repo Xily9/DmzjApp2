@@ -14,10 +14,16 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.util.TypedValue
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.xily.dmzj2.App
+import com.xily.dmzj2.R
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -112,13 +118,19 @@ inline fun <reified T : Activity> Fragment.startActivityForResult(requestCode: I
     startActivityForResult(intent, requestCode)
 }
 
-inline fun <reified T : Activity> Activity.startActivityForResult(requestCode: Int, bundle: Bundle) {
+inline fun <reified T : Activity> Activity.startActivityForResult(
+    requestCode: Int,
+    bundle: Bundle
+) {
     val intent = Intent(this, T::class.java)
     intent.putExtras(bundle)
     startActivityForResult(intent, requestCode)
 }
 
-inline fun <reified T : Activity> Fragment.startActivityForResult(requestCode: Int, bundle: Bundle) {
+inline fun <reified T : Activity> Fragment.startActivityForResult(
+    requestCode: Int,
+    bundle: Bundle
+) {
     val intent = Intent(context, T::class.java)
     intent.putExtras(bundle)
     startActivityForResult(intent, requestCode)
@@ -274,4 +286,23 @@ fun rsBulr(context: Context, source: Bitmap, radius: Float, scale: Float): Bitma
     output.copyTo(inputBmp)
     renderScript.destroy()
     return inputBmp
+}
+
+fun ImageView.load(path: Any?, type: Int = 1) {
+    val img = if (type == 1) R.drawable.ic_default_image_vertical else R.drawable.ic_default_image
+    val options = RequestOptions()
+        .placeholder(img)
+        .error(img)
+    if (path is String) {
+        val glideUrl = GlideUrl(
+            path, LazyHeaders.Builder()
+                .addHeader("Referer", "http://m.dmzj.com")
+                .build()
+        )
+        Glide.with(context).load(glideUrl)
+            .apply(options)
+            .into(this)
+    } else {
+        Glide.with(context).load(path).apply(options).into(this)
+    }
 }
