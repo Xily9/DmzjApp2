@@ -8,7 +8,7 @@ interface DmzjApiService {
     @GET(ApiConfig.myApiUrl + "checkVersion3")
     suspend fun checkVersion(): VersionBean
 
-    @GET(ApiConfig.dmzjApiUrl + "comic/{comicId}.json")
+    @GET(ApiConfig.dmzjApiUrl + "comic/comic_{comicId}.json")
     suspend fun getComic(@Path("comicId") comicId: String): ComicBean
 
     @GET(ApiConfig.dmzjApiUrl + "chapter/{comicId}/{chapterId}.json")

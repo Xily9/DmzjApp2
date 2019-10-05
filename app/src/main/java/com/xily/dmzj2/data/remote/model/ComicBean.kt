@@ -2,25 +2,25 @@ package com.xily.dmzj2.data.remote.model
 
 
 data class ComicBean(
-        var id: Int, // 7598
-        var islong: Int, // 2
-        var direction: Int, // 1
-        var title: String, // 黑社会的超能力女儿
-        var is_dmzj: Int, // 0
-        var cover: String, // http://images.dmzj.com/webpic/11/160131heishehuifml.jpg
-        var description: String, // 黑社会干部与从天而降有超能力的女儿时而三次时而五次的幸福生活
-        var last_updatetime: Int, // 1528269681
-        var copyright: Int, // 0
-        var first_letter: String, // h
-        var hot_num: Int, // 63806118
-        var hit_num: Int, // 710774896
-        var uid: String?, // null
-        var types: List<Type>,
-        var status: List<Statu>,
-        var authors: List<Author>,
-        var subscribe_num: Int, // 296703
-        var chapters: List<Chapter>,
-        var comment: Comment
+    var id: Int, // 7598
+    var islong: Int, // 2
+    var direction: Int, // 1
+    var title: String, // 黑社会的超能力女儿
+    var is_dmzj: Int, // 0
+    var cover: String, // http://images.dmzj.com/webpic/11/160131heishehuifml.jpg
+    var description: String, // 黑社会干部与从天而降有超能力的女儿时而三次时而五次的幸福生活
+    var last_updatetime: Int, // 1528269681
+    var copyright: Int, // 0
+    var first_letter: String, // h
+    var hot_num: Int, // 63806118
+    var hit_num: Long, // 710774896
+    var uid: String?, // null
+    var types: List<Type>,
+    var status: List<Statu>,
+    var authors: List<Author>,
+    var subscribe_num: Int, // 296703
+    var chapters: List<Chapter>,
+    var comment: Comment
 ) {
 
     data class Chapter(
