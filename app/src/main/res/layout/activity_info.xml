@@ -90,6 +90,7 @@
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/layout_last_read"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_marginTop="90dp"
@@ -104,9 +105,9 @@
                                     android:tint="#fff" />
 
                                 <TextView
+                                    android:id="@+id/tv_last_read"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="145章"
                                     android:textColor="#fff"
                                     android:textSize="17sp" />
                             </LinearLayout>
@@ -195,8 +196,7 @@
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -204,5 +204,6 @@
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="?attr/titleTextAppearance" />
 </FrameLayout>

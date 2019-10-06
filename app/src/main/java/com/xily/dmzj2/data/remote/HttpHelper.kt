@@ -22,8 +22,9 @@ interface HttpHelper {
     suspend fun getClassify(filter: String, page: String): List<ClassifyBean>
     suspend fun getRecommend(): List<RecommendBean>
     suspend fun getMineRecommend(categoryId: String, uid: String): MineRecommendBean
-    suspend fun searchA(word: String, page: String, pageNmu: String): List<SearchABean>
     suspend fun getRankFilter(): List<RankFilterBean>
     suspend fun getRank(filter: String, day: String, type: String, page: String): List<RankBean>
-
+    suspend fun getReadInfo(uid: String, comicId: String): ReInfoBean
+    suspend fun getSubscribeStatus(uid: String, comicId: String): SubscribeStatusBean
+    suspend fun recordRead(queryMap: Map<String, String>): RecordReadBean
 }

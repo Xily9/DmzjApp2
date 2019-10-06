@@ -1,12 +1,24 @@
 package com.xily.dmzj2.data.remote
 
 import com.xily.dmzj2.data.remote.service.DmzjApiService
-import com.xily.dmzj2.data.remote.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
 class RetrofitHelper(private val dmzjApi: DmzjApiService) : HttpHelper {
+    override suspend fun getReadInfo(uid: String, comicId: String) = withContext(Dispatchers.IO) {
+        dmzjApi.getReadInfo(uid, comicId)
+    }
+
+    override suspend fun getSubscribeStatus(uid: String, comicId: String) =
+        withContext(Dispatchers.IO) {
+            dmzjApi.getSubscribeStatus(uid, comicId)
+        }
+
+    override suspend fun recordRead(queryMap: Map<String, String>) = withContext(Dispatchers.IO) {
+        dmzjApi.recordRead(queryMap)
+    }
+
     override suspend fun getLatest(type: String, page: String) = withContext(Dispatchers.IO) {
         dmzjApi.getLatest(type, page)
     }
@@ -34,11 +46,6 @@ class RetrofitHelper(private val dmzjApi: DmzjApiService) : HttpHelper {
     override suspend fun getMineRecommend(categoryId: String, uid: String) =
         withContext(Dispatchers.IO) {
             dmzjApi.getMineRecommend(categoryId, uid)
-        }
-
-    override suspend fun searchA(word: String, page: String, pageNmu: String) =
-        withContext(Dispatchers.IO) {
-            dmzjApi.searchA(word, page, pageNmu)
         }
 
     override suspend fun getRankFilter() = withContext(Dispatchers.IO) {

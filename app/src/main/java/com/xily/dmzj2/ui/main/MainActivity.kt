@@ -19,7 +19,6 @@ import com.xily.dmzj2.ui.user.HistoryFragment
 import com.xily.dmzj2.ui.user.LoginActivity
 import com.xily.dmzj2.ui.user.SubscribeFragment
 import com.xily.dmzj2.ui.user.UserActivity
-import com.xily.dmzj2.utils.ThemeUtil
 import com.xily.dmzj2.utils.startActivity
 import com.xily.dmzj2.utils.toastInfo
 import kotlinx.android.synthetic.main.activity_main.*
@@ -130,7 +129,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 R.id.nav_history -> changeFragmentIndex(1)
                 R.id.nav_subscribe -> changeFragmentIndex(2)
                 //R.id.nav_setting -> startActivity<SettingsActivity>()
-                R.id.nav_theme -> ThemeUtil.showSwitchThemeDialog(this@MainActivity)
+                R.id.nav_theme -> {
+                }
                 //R.id.nav_about -> startActivity<AboutActivity>()
             }
         }

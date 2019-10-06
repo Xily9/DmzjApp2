@@ -37,7 +37,11 @@ interface DmzjApiService {
     suspend fun getSubscribe(@Query("uid") uid: String, @Query("dmzj_token") token: String, @Query("page") page: String): List<SubscribeBean>
 
     @GET(ApiConfig.dmzjCommentUrl + "v1/4/latest/{comicId}")
-    suspend fun getComments(@Path("comicId") comicId: String, @Query("page_index") page: String, @Query("limit") limit: String)
+    suspend fun getComments(
+        @Path("comicId") comicId: String, @Query("page_index") page: String, @Query(
+            "limit"
+        ) limit: String
+    )
 
     @GET(ApiConfig.dmzjApiUrl + "latest/{type}/{page}.json")
     suspend fun getLatest(@Path("type") type: String, @Path("page") page: String): List<LatestBean>
@@ -60,15 +64,22 @@ interface DmzjApiService {
     @GET(ApiConfig.dmzjApiUrl + "recommend/batchUpdate")
     suspend fun getMineRecommend(@Query("category_id") categoryId: String, @Query("uid") uid: String): MineRecommendBean
 
-    @GET("http://52uwp.com/api/Dmzj")
-    suspend fun searchA(@Query("keyword") word: String, @Query("page") page: String, @Query("pageNum") pageNmu: String): List<SearchABean>
-
     @GET(ApiConfig.dmzjApiUrl + "rank/type_filter.json")
     suspend fun getRankFilter(): List<RankFilterBean>
 
-    @GET(ApiConfig.dmzjApiUrl + "/rank/{filter}/{day}/{type}/{page}.json")
-    suspend fun getRank(@Path("filter") filter: String, @Path("day") day: String, @Path("type") type: String, @Path("page") page: String): List<RankBean>
+    @GET(ApiConfig.dmzjApiUrl + "rank/{filter}/{day}/{type}/{page}.json")
+    suspend fun getRank(
+        @Path("filter") filter: String, @Path("day") day: String, @Path("type") type: String, @Path(
+            "page"
+        ) page: String
+    ): List<RankBean>
 
+    @GET(ApiConfig.dmzjApiUrl2 + "getReInfo/comic/{uid}/{comicId}/0")
+    suspend fun getReadInfo(@Path("uid") uid: String, @Path("comicId") comicId: String): ReInfoBean
 
+    @GET(ApiConfig.dmzjApiUrl + "subscribe/0/{uid}/{comicId}")
+    suspend fun getSubscribeStatus(@Path("uid") uid: String, @Path("comicId") comicId: String): SubscribeStatusBean
 
+    @GET(ApiConfig.dmzjApiUrl2 + "record/getRe")
+    suspend fun recordRead(@QueryMap queryMap: Map<String, String>): RecordReadBean
 }

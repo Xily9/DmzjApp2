@@ -3,7 +3,7 @@
     android:id="@+id/nav_image"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="?colorAccent">
+    android:background="?attr/navHeaderBackgroundColor">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/face"
@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/face"
+        android:textColor="?attr/colorSecondary"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:text="点击头像登录"
-        android:textColor="#fff"
         android:textSize="16sp" />
 </RelativeLayout>

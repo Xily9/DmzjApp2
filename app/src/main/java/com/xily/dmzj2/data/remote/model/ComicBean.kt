@@ -1,5 +1,8 @@
 package com.xily.dmzj2.data.remote.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 
 data class ComicBean(
     var id: Int, // 7598
@@ -24,50 +27,50 @@ data class ComicBean(
 ) {
 
     data class Chapter(
-            var title: String, // 单行本
-            var data: List<Data>
+        var title: String, // 单行本
+        var data: List<Data>
     ) {
-
+        @Parcelize
         data class Data(
-                var chapter_id: Int, // 24747
-                var chapter_title: String, // 1卷
-                var updatetime: Int, // 1382808052
-                var filesize: Int, // 35599904
-                var chapter_order: Int // 1
-        )
+            var chapter_id: Int, // 24747
+            var chapter_title: String, // 1卷
+            var updatetime: Int, // 1382808052
+            var filesize: Int, // 35599904
+            var chapter_order: Int // 1
+        ) : Parcelable
     }
 
 
     data class Comment(
-            var comment_count: Int, // 11510
-            var latest_comment: List<LatestComment>
+        var comment_count: Int, // 11510
+        var latest_comment: List<LatestComment>
     ) {
 
         data class LatestComment(
-                var comment_id: Int, // 5600793
-                var uid: Int, // 104785800
-                var content: String, // 找到了，接41话
-                var createtime: Int, // 1531539255
-                var nickname: String, // 大连哪有阿瓦隆
-                var avatar: String // http://images.dmzj.com/user/4b/94/4b94d7299fc22281cad96c4532bf8694.png
+            var comment_id: Int, // 5600793
+            var uid: Int, // 104785800
+            var content: String, // 找到了，接41话
+            var createtime: Int, // 1531539255
+            var nickname: String, // 大连哪有阿瓦隆
+            var avatar: String // http://images.dmzj.com/user/4b/94/4b94d7299fc22281cad96c4532bf8694.png
         )
     }
 
 
     data class Type(
-            var tag_id: Int, // 7568
-            var tag_name: String // 搞笑
+        var tag_id: Int, // 7568
+        var tag_name: String // 搞笑
     )
 
 
     data class Statu(
-            var tag_id: Int, // 2309
-            var tag_name: String // 连载中
+        var tag_id: Int, // 2309
+        var tag_name: String // 连载中
     )
 
 
     data class Author(
-            var tag_id: Int, // 4077
-            var tag_name: String // 大武政夫
+        var tag_id: Int, // 4077
+        var tag_name: String // 大武政夫
     )
 }

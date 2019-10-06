@@ -5,6 +5,7 @@
         android:id="@+id/menu_search"
         android:orderInCategory="100"
         android:title="搜索"
+        app:iconTint="?attr/colorSecondary"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="always" />
 </menu>

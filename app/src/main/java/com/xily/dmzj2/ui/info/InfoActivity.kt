@@ -1,13 +1,14 @@
 package com.xily.dmzj2.ui.info
 
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.transition.Transition
+import android.view.Menu
 import android.view.MenuItem
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -20,12 +21,17 @@ import com.bumptech.glide.request.target.Target
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import com.xily.dmzj2.data.remote.model.ComicBean
+import com.xily.dmzj2.data.remote.model.ReInfoBean
+import com.xily.dmzj2.data.remote.model.SubscribeStatusBean
 import com.xily.dmzj2.ui.read.ReadActivity
 import com.xily.dmzj2.utils.*
 import kotlinx.android.synthetic.main.activity_info.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class InfoActivity : BaseActivity() {
@@ -33,6 +39,8 @@ class InfoActivity : BaseActivity() {
     private lateinit var adapter: ChaptersAdapter
     private var isBitmapLoaded = false
     private val infoViewModel: InfoViewModel by viewModel()
+    private lateinit var menu: Menu
+    private var isSubscribe = false
     override fun getLayoutId(): Int {
         return R.layout.activity_info
     }
@@ -62,10 +70,15 @@ class InfoActivity : BaseActivity() {
             iv_background.setImageBitmap(rsBulr(this, bitmap, 25f, 1f))
             isBitmapLoaded = true
         }
+        var oldAlpha = 0
         layout_scroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             val alpha = (scrollY / (height) * 255).toInt()
             toolbar.background.mutate().alpha = if (alpha > 255) 255 else alpha
+            if (oldAlpha > 150 && alpha <= 150) setLightToolBar()
+            else if (oldAlpha <= 150 && alpha > 150) setNormalToolBar()
+            oldAlpha = alpha
         }
+        //监听转场动画,等转场动画执行完再加载数据
         window.sharedElementEnterTransition.addListener(object :
             Transition.TransitionListener {
             override fun onTransitionEnd(transition: Transition?) {
@@ -85,6 +98,49 @@ class InfoActivity : BaseActivity() {
             }
 
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_info_menu, menu)
+        this.menu = menu
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed() // back button
+                return true
+            }
+            R.id.menu_subscribe -> {
+
+            }
+            R.id.menu_download -> {
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setNormalToolBar() {
+        setDarkStatusIcon(true)
+        val iconColor = getAttrColor(R.attr.colorSecondary)
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).icon.setTint(iconColor)
+        }
+        toolbar.setTitleTextColor(Color.parseColor("#212121"))
+        toolbar.navigationIcon?.setTint(iconColor)
+    }
+
+
+    private fun setLightToolBar() {
+        setDarkStatusIcon(false)
+        val iconColor = Color.parseColor("#ffffff")
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).icon.setTint(iconColor)
+        }
+        toolbar.setTitleTextColor(Color.parseColor("#ffffff"))
+        toolbar.navigationIcon?.setTint(iconColor)
     }
 
     /* private fun initViewPager() {
@@ -114,6 +170,8 @@ class InfoActivity : BaseActivity() {
             val bundle = Bundle()
             bundle.putInt("comicId", id)
             bundle.putInt("chapterId", adapter.currentList[position].chapter_id)
+            bundle.putInt("position", position)
+            bundle.putParcelableArrayList("chapters", ArrayList(adapter.currentList))
             startActivity<ReadActivity>(bundle)
         }
         recycle_chapter.layoutManager = GridLayoutManager(this, 4)
@@ -131,24 +189,26 @@ class InfoActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed() // back button
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun loadData() {
         swipe.isRefreshing = true
-        infoViewModel.getComic(id.toString()).observe(this, Observer {
-            if (it != null) {
-                showComic(it)
-            } else {
-                toastError("加载详情失败!")
+        launch(tryBlock = {
+            val asyncList = arrayListOf<Deferred<*>>()
+            asyncList += async {
+                showComic(infoViewModel.getComic(id.toString()))
             }
+            asyncList += async {
+                showReInfo(infoViewModel.getReadInfo(id.toString()))
+            }
+            asyncList += async {
+                showSubscribeStatus(infoViewModel.getSubscribeStatus(id.toString()))
+            }
+            asyncList.forEach {
+                it.await()
+            }
+        }, catchBlock = {
+            it.printStackTrace()
+            toastError("加载详情失败!")
+        }, finallyBlock = {
             swipe.isRefreshing = false
         })
     }
@@ -205,5 +265,27 @@ class InfoActivity : BaseActivity() {
         }
         title = comicBean.title
         adapter.submitList(comicBean.chapters[0].data)
+    }
+
+    private fun showReInfo(reInfoBean: ReInfoBean) {
+        tv_last_read.text = reInfoBean.chapter_name
+        layout_last_read.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("comicId", id)
+            bundle.putInt("chapterId", reInfoBean.chapter_id)
+            bundle.putInt("page", reInfoBean.record)
+            bundle.putParcelableArrayList("chapters", ArrayList(adapter.currentList))
+            startActivity<ReadActivity>(bundle)
+        }
+    }
+
+    private fun showSubscribeStatus(subscribeStatusBean: SubscribeStatusBean) {
+        if (subscribeStatusBean.code == 0) {
+            isSubscribe = true
+            menu.findItem(R.id.menu_subscribe).setIcon(R.drawable.ic_favorite_white_24dp)
+        } else {
+            isSubscribe = false
+            menu.findItem(R.id.menu_subscribe).setIcon(R.drawable.ic_favorite_border_white_24dp)
+        }
     }
 }
