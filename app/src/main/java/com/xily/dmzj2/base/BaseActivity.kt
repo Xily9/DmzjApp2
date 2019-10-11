@@ -47,21 +47,17 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun launch(
         tryBlock: suspend CoroutineScope.() -> Unit,
-        catchBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,
-        finallyBlock: (suspend CoroutineScope.() -> Unit)? = null
+        catchBlock: (suspend CoroutineScope.(Throwable) -> Unit) = {},
+        finallyBlock: (suspend CoroutineScope.() -> Unit) = {}
     ) {
         lifecycleScope.launch {
             try {
                 tryBlock()
             } catch (e: CancellationException) {
             } catch (e: Exception) {
-                catchBlock?.let {
-                    it(e)
-                }
+                catchBlock(e)
             } finally {
-                finallyBlock?.let {
-                    it()
-                }
+                finallyBlock()
             }
         }
     }

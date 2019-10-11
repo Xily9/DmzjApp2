@@ -6,6 +6,20 @@ import kotlinx.coroutines.withContext
 
 
 class RetrofitHelper(private val dmzjApi: DmzjApiService) : HttpHelper {
+    override suspend fun getHotComments(comicId: String, page: String) =
+        withContext(Dispatchers.IO) {
+            dmzjApi.getHotComments(comicId, page)
+        }
+
+    override suspend fun getTopComment(comicId: String) = withContext(Dispatchers.IO) {
+        dmzjApi.getTopComment(comicId)
+    }
+
+    override suspend fun getComments(comicId: String, page: String, limit: String) =
+        withContext(Dispatchers.IO) {
+            dmzjApi.getComments(comicId, page, limit)
+        }
+
     override suspend fun getReadInfo(uid: String, comicId: String) = withContext(Dispatchers.IO) {
         dmzjApi.getReadInfo(uid, comicId)
     }

@@ -16,10 +16,10 @@ import com.xily.dmzj2.utils.toastError
 import com.youth.banner.BannerConfig
 import com.youth.banner.loader.ImageLoader
 import kotlinx.android.synthetic.main.fragment_home_index.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class HomeIndexFragment : BaseFragment() {
-    private val homeIndexViewModel: HomeIndexViewModel by viewModel()
+    private lateinit var homeIndexViewModel: HomeIndexViewModel
 
 
     override fun getLayoutId(): Int {
@@ -27,6 +27,7 @@ class HomeIndexFragment : BaseFragment() {
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        homeIndexViewModel = getViewModel()
         swipe.setColorSchemeColors(getAttrColor(R.attr.colorAccent))
         banner.setImageLoader(object : ImageLoader() {
             override fun displayImage(context: Context, path: Any?, imageView: ImageView) {

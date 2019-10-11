@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.info.InfoActivity" />
-        <activity android:name=".ui.user.LoginActivity" />
+        <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".ui.common.BrowserActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.user.UserActivity" />

@@ -5,11 +5,13 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.transition.Transition
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.GridLayoutManager
+import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -18,6 +20,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.AppBarLayout
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import com.xily.dmzj2.data.remote.model.ComicBean
@@ -26,34 +29,25 @@ import com.xily.dmzj2.data.remote.model.SubscribeStatusBean
 import com.xily.dmzj2.ui.read.ReadActivity
 import com.xily.dmzj2.utils.*
 import kotlinx.android.synthetic.main.activity_info.*
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class InfoActivity : BaseActivity() {
     private var id = 0
-    private lateinit var adapter: ChaptersAdapter
     private var isBitmapLoaded = false
-    private val infoViewModel: InfoViewModel by viewModel()
+    private lateinit var infoViewModel: InfoViewModel
     private lateinit var menu: Menu
     private var isSubscribe = false
+    private var chapters = arrayListOf<ComicBean.Chapter.Data>()
     override fun getLayoutId(): Int {
         return R.layout.activity_info
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
-        initToolBar()
-        initRecycleView()
-        swipe.setColorSchemeColors(getAttrColor(R.attr.colorAccent))
-        swipe.setOnRefreshListener {
-            loadData()
-        }
-        //initViewPager()
-        var statusBarHeight = 0
+        /*var statusBarHeight = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
             statusBarHeight = resources.getDimensionPixelSize(resourceId)
@@ -61,8 +55,13 @@ class InfoActivity : BaseActivity() {
         val actionbarSizeTypedArray = obtainStyledAttributes(intArrayOf(R.attr.actionBarSize))
         val height = dp2px(200f) - actionbarSizeTypedArray.getDimension(0, 0f) - statusBarHeight
         actionbarSizeTypedArray.recycle()
-        debug(msg = height.toInt())
+        debug(msg = height.toInt())*/
         id = intent.getIntExtra("id", 0)
+        infoViewModel = getViewModel {
+            parametersOf(id)
+        }
+        initToolBar()
+        initViewPager()
         val bytes = intent.getByteArrayExtra("bitmap")
         if (bytes != null && bytes.isNotEmpty()) {
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -70,15 +69,16 @@ class InfoActivity : BaseActivity() {
             iv_background.setImageBitmap(rsBulr(this, bitmap, 25f, 1f))
             isBitmapLoaded = true
         }
-        var oldAlpha = 0
-        layout_scroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-            val alpha = (scrollY / (height) * 255).toInt()
-            toolbar.background.mutate().alpha = if (alpha > 255) 255 else alpha
-            if (oldAlpha > 150 && alpha <= 150) setLightToolBar()
-            else if (oldAlpha <= 150 && alpha > 150) setNormalToolBar()
-            oldAlpha = alpha
-        }
-        //监听转场动画,等转场动画执行完再加载数据
+        /* var oldAlpha = 0
+         layout_scroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+             val alpha = (scrollY / (height) * 255).toInt()
+             toolbar.background.mutate().alpha = if (alpha > 255) 255 else alpha
+             if (oldAlpha > 150 && alpha <= 150) setLightToolBar()
+             else if (oldAlpha <= 150 && alpha > 150) setNormalToolBar()
+             oldAlpha = alpha
+         }*/
+        loadData()
+        /*//监听转场动画,等转场动画执行完再加载数据
         window.sharedElementEnterTransition.addListener(object :
             Transition.TransitionListener {
             override fun onTransitionEnd(transition: Transition?) {
@@ -97,12 +97,56 @@ class InfoActivity : BaseActivity() {
             override fun onTransitionStart(transition: Transition?) {
             }
 
+        })*/
+        var oldOffset = 0
+        var critical = 300
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (-oldOffset > critical && -verticalOffset <= critical) setLightToolBar()
+            else if (-oldOffset <= critical && -verticalOffset > critical) setNormalToolBar()
+            oldOffset = verticalOffset
         })
+        ViewCompat.setOnApplyWindowInsetsListener(appBarLayout) { _, insets ->
+            // Instead of
+            // toolbar.setPadding(0, insets.systemWindowInsetTop, 0, 0)
+            (toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+                insets.systemWindowInsetTop
+            insets.consumeSystemWindowInsets()
+        }
+    }
+
+    private fun initData() {
+        infoViewModel.comicBean.observe(this, Observer {
+            if (it != null) {
+                showComic(it)
+            } else {
+                toastError("获取漫画信息失败!")
+            }
+        })
+        infoViewModel.subscribeStatusBean.observe(this, Observer {
+            it?.let {
+                showSubscribeStatus(it)
+            }
+        })
+        infoViewModel.reInfoBean.observe(this, Observer {
+            it?.let {
+                showReInfo(it)
+            }
+        })
+        infoViewModel.chaptersBean.observe(this, Observer {
+            it?.let {
+                chapters.addAll(it[0].data)
+            }
+        })
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        this.menu = menu
+        initData()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_info_menu, menu)
-        this.menu = menu
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -126,10 +170,10 @@ class InfoActivity : BaseActivity() {
         setDarkStatusIcon(true)
         val iconColor = getAttrColor(R.attr.colorSecondary)
         for (i in 0 until menu.size()) {
-            menu.getItem(i).icon.setTint(iconColor)
+            menu.getItem(i).icon.mutate().setTint(iconColor)
         }
         toolbar.setTitleTextColor(Color.parseColor("#212121"))
-        toolbar.navigationIcon?.setTint(iconColor)
+        toolbar.navigationIcon?.mutate()?.setTint(iconColor)
     }
 
 
@@ -137,52 +181,37 @@ class InfoActivity : BaseActivity() {
         setDarkStatusIcon(false)
         val iconColor = Color.parseColor("#ffffff")
         for (i in 0 until menu.size()) {
-            menu.getItem(i).icon.setTint(iconColor)
+            menu.getItem(i).icon.mutate().setTint(iconColor)
         }
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"))
-        toolbar.navigationIcon?.setTint(iconColor)
+        toolbar.navigationIcon?.mutate()?.setTint(iconColor)
     }
 
-    /* private fun initViewPager() {
-         viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
-             override fun getItem(position: Int): Fragment {
-                 return HomeIndexFragment.newInstance()
-             }
+    private fun initViewPager() {
+        viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
+            val fragments = arrayOf(ChapterFragment.newInstance(), CommentFragment.newInstance())
+            val titles = arrayOf("章节", "评论")
+            override fun getItem(position: Int): Fragment {
+                return fragments[position]
+            }
 
-             override fun getCount(): Int {
-                 return 2
-             }
+            override fun getCount(): Int {
+                return 2
+            }
 
-             override fun getPageTitle(position: Int): CharSequence? {
-                 return when (position) {
-                     0 -> "章节"
-                     1 -> "评论"
-                     else -> ""
-                 }
-             }
-         }
-         layout_tab.setupWithViewPager(viewPager)
-     }*/
-
-    private fun initRecycleView() {
-        adapter = ChaptersAdapter()
-        adapter.setOnItemClickListener { position ->
-            val bundle = Bundle()
-            bundle.putInt("comicId", id)
-            bundle.putInt("chapterId", adapter.currentList[position].chapter_id)
-            bundle.putInt("position", position)
-            bundle.putParcelableArrayList("chapters", ArrayList(adapter.currentList))
-            startActivity<ReadActivity>(bundle)
+            override fun getPageTitle(position: Int): CharSequence? {
+                return titles[position]
+            }
         }
-        recycle_chapter.layoutManager = GridLayoutManager(this, 4)
-        recycle_chapter.adapter = adapter
-        recycle_chapter.isNestedScrollingEnabled = false
+        tabLayout.setupWithViewPager(viewPager)
+        //tabLayout2.setupWithViewPager(viewPager)
     }
+
 
     private fun initToolBar() {
         setStatusBarUpper()
         setSupportActionBar(toolbar)
-        toolbar.background.mutate().alpha = 0
+        //toolbar.background.mutate().alpha = 0
         supportActionBar?.apply {
             setHomeButtonEnabled(true)
             setDisplayHomeAsUpEnabled(true)
@@ -190,27 +219,7 @@ class InfoActivity : BaseActivity() {
     }
 
     private fun loadData() {
-        swipe.isRefreshing = true
-        launch(tryBlock = {
-            val asyncList = arrayListOf<Deferred<*>>()
-            asyncList += async {
-                showComic(infoViewModel.getComic(id.toString()))
-            }
-            asyncList += async {
-                showReInfo(infoViewModel.getReadInfo(id.toString()))
-            }
-            asyncList += async {
-                showSubscribeStatus(infoViewModel.getSubscribeStatus(id.toString()))
-            }
-            asyncList.forEach {
-                it.await()
-            }
-        }, catchBlock = {
-            it.printStackTrace()
-            toastError("加载详情失败!")
-        }, finallyBlock = {
-            swipe.isRefreshing = false
-        })
+        infoViewModel.getComic()
     }
 
     private fun showComic(comicBean: ComicBean) {
@@ -264,7 +273,6 @@ class InfoActivity : BaseActivity() {
             }).apply(options).into(iv_cover)
         }
         title = comicBean.title
-        adapter.submitList(comicBean.chapters[0].data)
     }
 
     private fun showReInfo(reInfoBean: ReInfoBean) {
@@ -274,7 +282,7 @@ class InfoActivity : BaseActivity() {
             bundle.putInt("comicId", id)
             bundle.putInt("chapterId", reInfoBean.chapter_id)
             bundle.putInt("page", reInfoBean.record)
-            bundle.putParcelableArrayList("chapters", ArrayList(adapter.currentList))
+            bundle.putParcelableArrayList("chapters", chapters)
             startActivity<ReadActivity>(bundle)
         }
     }

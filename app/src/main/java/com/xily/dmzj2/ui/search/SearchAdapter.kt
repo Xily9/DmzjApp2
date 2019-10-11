@@ -24,9 +24,11 @@ class SearchAdapter : BaseListAdapter<SearchBean, LayoutItemSearchBinding>(objec
         return R.layout.layout_item_search
     }
 
-    override fun bind(binding: LayoutItemSearchBinding, item: SearchBean) {
-        binding.data = item
-        binding.ivCover.load(item.cover)
+    override fun bind(
+        holder: BaseViewHolder<LayoutItemSearchBinding>,
+        item: SearchBean
+    ) {
+        holder.binding.data = item
+        holder.binding.ivCover.load(item.cover)
     }
-
 }

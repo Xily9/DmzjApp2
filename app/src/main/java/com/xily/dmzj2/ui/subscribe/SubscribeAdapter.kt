@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.user
+package com.xily.dmzj2.ui.subscribe
 
 import androidx.recyclerview.widget.DiffUtil
 import com.xily.dmzj2.R
@@ -24,9 +24,9 @@ class SubscribeAdapter : BaseListAdapter<SubscribeBean, LayoutItemSubscribeBindi
         return R.layout.layout_item_subscribe
     }
 
-    override fun bind(binding: LayoutItemSubscribeBinding, item: SubscribeBean) {
-        binding.image.load(item.sub_img)
-        binding.text.text = item.name
+    override fun bind(holder: BaseViewHolder<LayoutItemSubscribeBinding>, item: SubscribeBean) {
+        holder.binding.image.load(item.sub_img)
+        holder.binding.text.text = item.name
     }
 
 }

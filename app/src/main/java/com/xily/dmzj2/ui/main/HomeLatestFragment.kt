@@ -16,4 +16,8 @@ class HomeLatestFragment : BaseFragment() {
     private fun showLatest(list: List<LatestBean>) {
 
     }
+
+    companion object {
+        fun newInstance() = HomeLatestFragment()
+    }
 }

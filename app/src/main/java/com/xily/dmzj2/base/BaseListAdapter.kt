@@ -79,11 +79,11 @@ abstract class BaseListAdapter<T, V : ViewDataBinding>(
     abstract fun getLayoutId(): Int
 
     override fun onBindViewHolder(holder: BaseViewHolder<V>, position: Int) {
-        bind(holder.binding, getItem(position))
+        bind(holder, getItem(position))
         holder.binding.executePendingBindings()
     }
 
-    protected abstract fun bind(binding: V, item: T)
+    protected abstract fun bind(holder: BaseViewHolder<V>, item: T)
     class BaseViewHolder<out T : ViewDataBinding> constructor(val binding: T) :
         RecyclerView.ViewHolder(binding.root)
 }

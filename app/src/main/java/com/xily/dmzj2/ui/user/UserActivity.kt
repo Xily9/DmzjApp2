@@ -7,15 +7,16 @@ import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class UserActivity : BaseActivity() {
-    private val userViewModel: UserViewModel by viewModel()
+    private lateinit var userViewModel: UserViewModel
     override fun getLayoutId(): Int {
         return R.layout.activity_user
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        userViewModel = getViewModel()
         initToolBar()
         btn_logout.setOnClickListener {
             userViewModel.logout()

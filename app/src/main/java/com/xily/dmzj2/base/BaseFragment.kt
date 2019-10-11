@@ -22,7 +22,11 @@ abstract class BaseFragment : Fragment() {
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        state: Bundle?
+    ): View? {
         return inflater.inflate(getLayoutId(), container, false)
     }
 
@@ -47,21 +51,17 @@ abstract class BaseFragment : Fragment() {
 
     fun launch(
         tryBlock: suspend CoroutineScope.() -> Unit,
-        catchBlock: (suspend CoroutineScope.(Throwable) -> Unit)? = null,
-        finallyBlock: (suspend CoroutineScope.() -> Unit)? = null
+        catchBlock: (suspend CoroutineScope.(Throwable) -> Unit) = {},
+        finallyBlock: (suspend CoroutineScope.() -> Unit) = {}
     ) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 tryBlock()
             } catch (e: CancellationException) {
             } catch (e: Exception) {
-                catchBlock?.let {
-                    it(e)
-                }
+                catchBlock(e)
             } finally {
-                finallyBlock?.let {
-                    it()
-                }
+                finallyBlock()
             }
         }
     }

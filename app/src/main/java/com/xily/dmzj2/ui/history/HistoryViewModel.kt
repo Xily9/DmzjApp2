@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.user
+package com.xily.dmzj2.ui.history
 
 import com.xily.dmzj2.base.BaseViewModel
 import com.xily.dmzj2.data.DataManager
@@ -6,13 +6,13 @@ import com.xily.dmzj2.data.DataManager
 /**
  * Created by Xily on 2019/10/5.
  */
-class SubscribeViewModel(private var dataManager: DataManager) : BaseViewModel() {
-    fun getSubscribe() = getResultData {
+class HistoryViewModel(private val dataManager: DataManager) : BaseViewModel() {
+    fun getHistory() = getResultData {
         val userData = dataManager.userData
         if (userData == null) {
             Result.failure(Exception("请先登录!"))
         } else {
-            Result.success(dataManager.getSubscribe(userData.uid, userData.dmzj_token, "0"))
+            Result.success(dataManager.getHistory(userData.uid))
         }
     }
 }

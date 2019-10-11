@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.user
+package com.xily.dmzj2.ui.subscribe
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -13,19 +13,20 @@ import com.xily.dmzj2.ui.info.InfoActivity
 import com.xily.dmzj2.utils.getAttrColor
 import com.xily.dmzj2.utils.toastError
 import kotlinx.android.synthetic.main.fragment_subscribe.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.io.ByteArrayOutputStream
 
 
 class SubscribeFragment : BaseFragment() {
 
     private lateinit var adapter: SubscribeAdapter
-    private val subscribeViewModel: SubscribeViewModel by viewModel()
+    private lateinit var subscribeViewModel: SubscribeViewModel
     override fun getLayoutId(): Int {
         return R.layout.fragment_subscribe
     }
 
     override fun initViews(state: Bundle?) {
+        subscribeViewModel = getViewModel()
         initSwipeRefreshLayout()
         initRecycleView()
         loadData()

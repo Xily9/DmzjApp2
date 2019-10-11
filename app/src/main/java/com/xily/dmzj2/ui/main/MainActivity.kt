@@ -15,9 +15,9 @@ import com.google.android.material.navigation.NavigationView
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
-import com.xily.dmzj2.ui.user.HistoryFragment
-import com.xily.dmzj2.ui.user.LoginActivity
-import com.xily.dmzj2.ui.user.SubscribeFragment
+import com.xily.dmzj2.ui.history.HistoryFragment
+import com.xily.dmzj2.ui.login.LoginActivity
+import com.xily.dmzj2.ui.subscribe.SubscribeFragment
 import com.xily.dmzj2.ui.user.UserActivity
 import com.xily.dmzj2.utils.startActivity
 import com.xily.dmzj2.utils.toastInfo
@@ -26,19 +26,20 @@ import kotlinx.android.synthetic.main.layout_side_menu.view.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var exitTime: Long = 0
     private lateinit var fragments: Array<Fragment>
     private var currentTabIndex = 0
     private var index = 0
-    private val mainViewModel: MainViewModel by viewModel()
+    private lateinit var mainViewModel: MainViewModel
     override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        mainViewModel = getViewModel()
         initToolBar()
         initNavigationView()
         initFragment()

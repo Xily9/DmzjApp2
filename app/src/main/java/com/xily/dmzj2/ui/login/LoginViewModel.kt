@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.user
+package com.xily.dmzj2.ui.login
 
 import com.xily.dmzj2.base.BaseViewModel
 import com.xily.dmzj2.data.DataManager

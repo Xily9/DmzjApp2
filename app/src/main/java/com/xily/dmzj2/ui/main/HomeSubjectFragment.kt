@@ -16,4 +16,8 @@ class HomeSubjectFragment : BaseFragment() {
     private fun showSubject(list: List<SubjectBean>) {
 
     }
+
+    companion object {
+        fun newInstance() = HomeSubjectFragment()
+    }
 }

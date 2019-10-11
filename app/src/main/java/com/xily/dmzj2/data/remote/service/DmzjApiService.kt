@@ -2,6 +2,7 @@ package com.xily.dmzj2.data.remote.service
 
 import com.xily.dmzj2.data.remote.ApiConfig
 import com.xily.dmzj2.data.remote.model.*
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface DmzjApiService {
@@ -25,7 +26,7 @@ interface DmzjApiService {
     suspend fun login(@Field("nickname") nickname: String, @Field("passwd") password: String): LoginBean
 
     @GET(ApiConfig.dmzjApiUrl2 + "getReInfo/comic/{uid}/0")
-    suspend fun getHistory(@Path("uid") uid: String): HistoryBean
+    suspend fun getHistory(@Path("uid") uid: String): List<HistoryBean>
 
     @GET(ApiConfig.dmzjApiUrl + "search/show/0/{word}/{page}.json")
     suspend fun search(@Path("word") word: String, @Path("page") page: String): List<SearchBean>
@@ -36,12 +37,18 @@ interface DmzjApiService {
     @GET(ApiConfig.dmzjApiUrl + "UCenter/subscribe?sub_type=1&letter=all&type=0")
     suspend fun getSubscribe(@Query("uid") uid: String, @Query("dmzj_token") token: String, @Query("page") page: String): List<SubscribeBean>
 
+    @GET(ApiConfig.dmzjApiUrl + "comment2/getTopComment/4/2/{comicId}.json")
+    suspend fun getTopComment(@Path("comicId") comicId: String): TopCommentBean
+
     @GET(ApiConfig.dmzjCommentUrl + "v1/4/latest/{comicId}")
     suspend fun getComments(
         @Path("comicId") comicId: String, @Query("page_index") page: String, @Query(
             "limit"
         ) limit: String
-    )
+    ): CommentBean
+
+    @GET(ApiConfig.dmzjApiUrl + "comment2/4/1/{comicId}/3/{page}.json")
+    suspend fun getHotComments(@Path("comicId") comicId: String, @Path("page") page: String): ResponseBody
 
     @GET(ApiConfig.dmzjApiUrl + "latest/{type}/{page}.json")
     suspend fun getLatest(@Path("type") type: String, @Path("page") page: String): List<LatestBean>

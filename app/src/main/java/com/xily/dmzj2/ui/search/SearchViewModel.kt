@@ -2,7 +2,6 @@ package com.xily.dmzj2.ui.search
 
 import com.xily.dmzj2.base.BaseViewModel
 import com.xily.dmzj2.data.DataManager
-import kotlinx.coroutines.Dispatchers
 
 /**
  * Created by Xily on 2019/10/5.
@@ -10,13 +9,13 @@ import kotlinx.coroutines.Dispatchers
 class SearchViewModel(private val dataManager: DataManager) : BaseViewModel() {
     fun getSearchHistory() = dataManager.getSearchHistory()
     fun clearSearchHistory() {
-        launch(Dispatchers.IO) {
+        launch {
             dataManager.clearSearchHistory()
         }
     }
 
     fun addSearchHistory(string: String) {
-        launch(Dispatchers.IO) {
+        launch {
             dataManager.addSearchHistory(string)
         }
     }

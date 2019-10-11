@@ -17,4 +17,8 @@ class HomeCategoryFragment : BaseFragment() {
     private fun showCategory(list: List<CategoryBean>) {
 
     }
+
+    companion object {
+        fun newInstance() = HomeCategoryFragment()
+    }
 }

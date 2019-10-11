@@ -23,8 +23,11 @@ class ReadAdapter :
         return R.layout.layout_item_read
     }
 
-    override fun bind(binding: LayoutItemReadBinding, item: String) {
-        binding.ivImg.load(item)
+    override fun bind(
+        holder: BaseViewHolder<LayoutItemReadBinding>,
+        item: String
+    ) {
+        holder.binding.ivImg.load(item)
     }
 
 }

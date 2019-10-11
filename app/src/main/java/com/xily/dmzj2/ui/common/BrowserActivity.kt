@@ -11,7 +11,7 @@ import android.webkit.*
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_browser.*
-import kotlinx.android.synthetic.main.activity_info.*
+import kotlinx.android.synthetic.main.layout_toolbar.*
 
 class BrowserActivity : BaseActivity() {
 

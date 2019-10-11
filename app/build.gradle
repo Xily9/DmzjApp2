@@ -37,6 +37,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.dependenciesVersion.appcompat}"
     implementation "androidx.preference:preference:${rootProject.ext.dependenciesVersion.appcompat}"
     implementation "androidx.room:room-runtime:${rootProject.ext.dependenciesVersion.room}"
+    implementation "androidx.room:room-ktx:${rootProject.ext.dependenciesVersion.room}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${rootProject.ext.dependenciesVersion.coroutines}"
     implementation "com.google.android.material:material:${rootProject.ext.dependenciesVersion.material}"
     implementation "androidx.constraintlayout:constraintlayout:${rootProject.ext.dependenciesVersion.constraintlayout}"

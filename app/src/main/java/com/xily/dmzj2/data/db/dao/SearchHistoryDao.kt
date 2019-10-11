@@ -2,7 +2,6 @@ package com.xily.dmzj2.data.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.xily.dmzj2.data.db.entity.SearchHistory
@@ -16,8 +15,8 @@ interface SearchHistoryDao {
     fun getSearchHistory(): LiveData<List<SearchHistory>>
 
     @Query("DELETE FROM SearchHistory")
-    fun clearSearchHistory()
+    suspend fun clearSearchHistory()
 
     @Insert
-    fun addSearchHistory(searchHistory: SearchHistory):Long
+    suspend fun addSearchHistory(searchHistory: SearchHistory): Long
 }

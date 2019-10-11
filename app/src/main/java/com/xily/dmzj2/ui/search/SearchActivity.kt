@@ -19,19 +19,20 @@ import com.xily.dmzj2.ui.info.InfoActivity
 import com.xily.dmzj2.utils.hideSoftInput
 import com.xily.dmzj2.utils.toastError
 import kotlinx.android.synthetic.main.activity_search.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.io.ByteArrayOutputStream
 
 class SearchActivity : BaseActivity() {
 
     private lateinit var adapter: SearchAdapter
-    private val searchViewModel: SearchViewModel by viewModel()
+    private lateinit var searchViewModel: SearchViewModel
 
     override fun getLayoutId(): Int {
         return R.layout.activity_search
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        searchViewModel = getViewModel()
         initToolBar()
         initSearchView()
         initRecyclerView()

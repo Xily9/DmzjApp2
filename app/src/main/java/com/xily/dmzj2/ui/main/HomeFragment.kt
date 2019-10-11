@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseFragment
+import com.xily.dmzj2.ui.rank.HomeRankFragment
 import com.xily.dmzj2.ui.search.SearchActivity
 import com.xily.dmzj2.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -27,6 +28,11 @@ class HomeFragment : BaseFragment() {
         viewPager.adapter = object : FragmentPagerAdapter(childFragmentManager) {
             override fun getItem(position: Int): Fragment {
                 return when (position) {
+                    0 -> HomeIndexFragment.newInstance()
+                    1 -> HomeLatestFragment.newInstance()
+                    2 -> HomeCategoryFragment.newInstance()
+                    3 -> HomeRankFragment.newInstance()
+                    4 -> HomeSubjectFragment.newInstance()
                     else -> HomeIndexFragment.newInstance()
                 }
             }

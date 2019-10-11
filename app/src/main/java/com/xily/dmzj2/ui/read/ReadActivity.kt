@@ -9,26 +9,28 @@ import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
 import com.xily.dmzj2.data.remote.model.ComicBean
 import com.xily.dmzj2.utils.hideStatusBar
 import com.xily.dmzj2.utils.toast
 import kotlinx.android.synthetic.main.activity_read.*
-import kotlinx.android.synthetic.main.layout_item_read_border.view.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.util.*
 
 class ReadActivity : BaseActivity() {
     private lateinit var adapter: ReadAdapter2
-    private val readViewModel: ReadViewModel by viewModel()
+    private lateinit var readViewModel: ReadViewModel
     private val imageList = arrayListOf<String>()
     private var position = 0
     private var comicId = 0
+    private var chapterId = 0
+    private var page = 1
     private var isLoading = false
     private var chapters = arrayListOf<ComicBean.Chapter.Data>()
     private var chapterPosition = arrayListOf<Int>() //保存每一话第一张图片的下标,用于计算当前章数和页数
@@ -37,28 +39,45 @@ class ReadActivity : BaseActivity() {
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        readViewModel = getViewModel()
         initToolBar()
         initRecycleView()
         comicId = intent.getIntExtra("comicId", 0)
-        val chapterId = intent.getIntExtra("chapterId", 0)
+        chapterId = intent.getIntExtra("chapterId", 0)
         position = intent.getIntExtra("position", -1)
-        chapters.addAll(intent.getParcelableArrayListExtra("chapters"))
-        if (position == -1 && chapters.isNotEmpty()) {
-            chapters.forEachIndexed { index, data ->
-                if (data.chapter_id == chapterId) {
-                    position = index
-                    return@forEachIndexed
+        page = intent.getIntExtra("page", 1)
+        intent.getParcelableArrayListExtra<ComicBean.Chapter.Data>("chapters")?.let {
+            chapters.addAll(it)
+        }
+        if (chapters.isEmpty()) {
+            readViewModel.getComic(comicId.toString()).observe(this, Observer {
+                chapters.addAll(it.chapters[0].data)
+                if (position == -1) {
+                    getChapterPosition()
                 }
-            }
+            })
+        } else if (position == -1) {
+            getChapterPosition()
         }
         isLoading = true
         readViewModel.getChapter(comicId.toString(), chapterId.toString()).observe(this, Observer {
             imageList.addAll(it.page_url)
             chapterPosition.add(0)
             adapter.notifyDataSetChanged()
+            recycle.scrollToPosition(page - 1)
             isLoading = false
         })
         getBatteryAndTime()
+    }
+
+    private fun getChapterPosition() {
+        chapters.forEachIndexed { index, data ->
+            if (data.chapter_id == chapterId) {
+                position = index
+                return@forEachIndexed
+            }
+        }
+        tv_chapter.text = chapters[position].chapter_title
     }
 
     private fun initToolBar() {
@@ -108,9 +127,6 @@ class ReadActivity : BaseActivity() {
     private fun initRecycleView() {
         recycle.layoutManager = LinearLayoutManager(this)
         adapter = ReadAdapter2(imageList)
-        val footerView = layoutInflater.inflate(R.layout.layout_item_read_border, recycle, false)
-        footerView.tv_tip.text = "正在加载下一话..."
-        adapter.footerView = footerView
         adapter.setOnItemClickListener { position ->
             //hideStatusBar(window,false)
             if (toolbar.visibility == View.INVISIBLE) {
@@ -135,7 +151,7 @@ class ReadActivity : BaseActivity() {
                 val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
                 if (layoutManager != null) {
                     //如果出现预留的footerView且不是在加载中就加载下一话
-                    if (!isLoading && position > 0 && layoutManager.findLastVisibleItemPosition() == layoutManager.itemCount - 1) {
+                    if (!isLoading && position > 0 && layoutManager.findFirstCompletelyVisibleItemPosition() == layoutManager.itemCount - 1) {
                         isLoading = true
                         readViewModel.getChapter(
                             comicId.toString(),
@@ -149,16 +165,40 @@ class ReadActivity : BaseActivity() {
                             toast("以为您自动加载" + chapters[position].chapter_title)
                         })
                     }
-                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    tv_chapter.text = getChapterTitle(firstVisibleItemPosition)
-                    tv_page.text = getPage(firstVisibleItemPosition)
+                    val lastVisibleItemPosition =
+                        layoutManager.findLastCompletelyVisibleItemPosition()
+                    if (lastVisibleItemPosition != NO_POSITION) {
+                        val chapterPosition = getChapterPosition(lastVisibleItemPosition)
+                        if (chapterPosition != -1) {
+                            chapterId = chapters[chapterPosition].chapter_id
+                            tv_chapter.text = chapters[chapterPosition].chapter_title
+                        }
+                        val pageData = getPage(lastVisibleItemPosition)
+                        if (pageData[0] != -1) {
+                            page = pageData[0]
+                            tv_page.text = "${pageData[0]}/${pageData[1]}"
+                        } else {
+                            if (!isLoading) page = lastVisibleItemPosition + 1
+                            tv_page.text =
+                                "${lastVisibleItemPosition + 1}/${layoutManager.itemCount}"
+                        }
+                    }
                 }
             }
         })
     }
 
-    private fun getChapterTitle(pos: Int): String {
-        if (chapterPosition.isEmpty()) return ""
+    private fun recordRead() {
+        readViewModel.recordRead(
+            comicId.toString(),
+            chapterId.toString(),
+            page,
+            (System.currentTimeMillis() / 1000).toString()
+        )
+    }
+
+    private fun getChapterPosition(pos: Int): Int {
+        if (chapterPosition.isEmpty() || position == -1) return -1
         var tmp = 0
         //遍历下标列表获取当前position位于哪个章节中
         chapterPosition.forEachIndexed { index, i ->
@@ -168,11 +208,11 @@ class ReadActivity : BaseActivity() {
         }
         //position + chapterPosition.size - 1 还原初始章节position
         //初始章节position-现在章节index就是正在看的章节position
-        return chapters[position + chapterPosition.size - 1 - tmp].chapter_title
+        return position + chapterPosition.size - 1 - tmp
     }
 
-    private fun getPage(pos: Int): String {
-        if (chapterPosition.isEmpty()) return ""
+    private fun getPage(pos: Int): List<Int> {
+        if (chapterPosition.isEmpty() || position == -1) return arrayListOf(-1, -1)
         var tmp = 0
         //遍历下标列表获取当前position位于哪个章节中
         chapterPosition.forEachIndexed { index, i ->
@@ -186,6 +226,11 @@ class ReadActivity : BaseActivity() {
             imageList.size - chapterPosition[tmp]
         }
         val page = pos - chapterPosition[tmp] + 1
-        return "$page/$totalPages"
+        return arrayListOf(page, totalPages)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        recordRead()
     }
 }
