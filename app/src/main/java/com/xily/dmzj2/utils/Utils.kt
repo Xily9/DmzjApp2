@@ -27,6 +27,7 @@ import com.xily.dmzj2.R
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -305,4 +306,31 @@ fun ImageView.load(path: Any?, type: Int = 1) {
     } else {
         Glide.with(context).load(path).apply(options).into(this)
     }
+}
+
+fun Int.toTimeStr(): String {
+    val time = System.currentTimeMillis() / 1000
+    val seconds = time - this
+    if (seconds < 10) {
+        return "刚刚"
+    }
+    if (seconds < 60) {
+        return "${seconds}秒前"
+    }
+    val minutes = seconds / 60
+    if (minutes < 60) {
+        return "${minutes}分钟前"
+    }
+    val hours = minutes / 60
+    if (hours < 24) {
+        return "${hours}小时前"
+    }
+    /*val calendar = Calendar.getInstance()
+    val day1 = calendar.get(Calendar.DAY_OF_MONTH)
+    calendar.time = Date(this * 1000L)
+    val day2 = calendar.get(Calendar.DAY_OF_MONTH)
+    if (day1 == day2) {
+        return SimpleDateFormat("HH:mm", Locale.CHINA).format(this * 1000L)
+    }*/
+    return SimpleDateFormat("MM-dd", Locale.CHINA).format(this * 1000L)
 }

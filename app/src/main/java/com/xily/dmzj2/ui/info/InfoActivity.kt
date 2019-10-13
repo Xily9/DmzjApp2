@@ -1,13 +1,13 @@
 package com.xily.dmzj2.ui.info
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
@@ -41,21 +41,13 @@ class InfoActivity : BaseActivity() {
     private lateinit var infoViewModel: InfoViewModel
     private lateinit var menu: Menu
     private var isSubscribe = false
+    private var isContentExpand = false
     private var chapters = arrayListOf<ComicBean.Chapter.Data>()
     override fun getLayoutId(): Int {
         return R.layout.activity_info
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
-        /*var statusBarHeight = 0
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            statusBarHeight = resources.getDimensionPixelSize(resourceId)
-        }
-        val actionbarSizeTypedArray = obtainStyledAttributes(intArrayOf(R.attr.actionBarSize))
-        val height = dp2px(200f) - actionbarSizeTypedArray.getDimension(0, 0f) - statusBarHeight
-        actionbarSizeTypedArray.recycle()
-        debug(msg = height.toInt())*/
         id = intent.getIntExtra("id", 0)
         infoViewModel = getViewModel {
             parametersOf(id)
@@ -69,35 +61,7 @@ class InfoActivity : BaseActivity() {
             iv_background.setImageBitmap(rsBulr(this, bitmap, 25f, 1f))
             isBitmapLoaded = true
         }
-        /* var oldAlpha = 0
-         layout_scroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-             val alpha = (scrollY / (height) * 255).toInt()
-             toolbar.background.mutate().alpha = if (alpha > 255) 255 else alpha
-             if (oldAlpha > 150 && alpha <= 150) setLightToolBar()
-             else if (oldAlpha <= 150 && alpha > 150) setNormalToolBar()
-             oldAlpha = alpha
-         }*/
         loadData()
-        /*//监听转场动画,等转场动画执行完再加载数据
-        window.sharedElementEnterTransition.addListener(object :
-            Transition.TransitionListener {
-            override fun onTransitionEnd(transition: Transition?) {
-                loadData()
-            }
-
-            override fun onTransitionResume(transition: Transition?) {
-            }
-
-            override fun onTransitionPause(transition: Transition?) {
-            }
-
-            override fun onTransitionCancel(transition: Transition?) {
-            }
-
-            override fun onTransitionStart(transition: Transition?) {
-            }
-
-        })*/
         var oldOffset = 0
         var critical = 300
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -187,6 +151,70 @@ class InfoActivity : BaseActivity() {
         toolbar.navigationIcon?.mutate()?.setTint(iconColor)
     }
 
+    private fun initContentAnimation() {
+        //TODO bug待修
+        var maxHeight = 0
+        var minHeight = 0
+        tv_content.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                tv_content.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                maxHeight = tv_content.measuredHeight
+                tv_content.maxLines = 3
+                tv_content.viewTreeObserver.addOnGlobalLayoutListener(object :
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        tv_content.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        minHeight = tv_content.measuredHeight
+                        debug("test", "min:$minHeight,max:$maxHeight")
+                        if (maxHeight <= minHeight) {
+                            maxHeight = minHeight
+                            iv_arrow_content.visibility = View.GONE
+                        } else {
+                            tv_content.setOnClickListener {
+                                val valueAnimator = if (isContentExpand) {
+                                    ValueAnimator.ofInt(maxHeight, minHeight)
+                                } else {
+                                    ValueAnimator.ofInt(minHeight, maxHeight)
+                                }
+                                valueAnimator.addUpdateListener {
+                                    val currentHeight = it.animatedValue as Int
+                                    tv_content.layoutParams.height = currentHeight
+                                    tv_content.requestLayout()
+                                }
+                                valueAnimator.duration = 300
+                                valueAnimator.addListener(object : Animator.AnimatorListener {
+                                    override fun onAnimationRepeat(animation: Animator?) {
+                                    }
+
+                                    override fun onAnimationEnd(animation: Animator?) {
+                                        isContentExpand = !isContentExpand
+                                        if (!isContentExpand) {
+                                            tv_content.maxLines = 4
+                                            iv_arrow_content.setImageResource(R.drawable.ic_keyboard_arrow_down_white_24dp)
+                                        }
+                                    }
+
+                                    override fun onAnimationCancel(animation: Animator?) {
+                                    }
+
+                                    override fun onAnimationStart(animation: Animator?) {
+                                        if (!isContentExpand) {
+                                            tv_content.maxLines = Int.MAX_VALUE
+                                            iv_arrow_content.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp)
+                                        }
+                                    }
+                                })
+                                valueAnimator.start()
+                            }
+                        }
+                    }
+                })
+            }
+        })
+
+    }
+
     private fun initViewPager() {
         viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
             val fragments = arrayOf(ChapterFragment.newInstance(), CommentFragment.newInstance())
@@ -223,7 +251,8 @@ class InfoActivity : BaseActivity() {
     }
 
     private fun showComic(comicBean: ComicBean) {
-        tv_content.text = comicBean.description
+        tv_content.text = comicBean.description.trim()
+        initContentAnimation()
         tv_author.text = ""
         comicBean.authors.forEach {
             tv_author.append(it.tag_name + " ")
