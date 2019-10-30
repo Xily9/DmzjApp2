@@ -150,6 +150,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
                     android:tint="#9a9a9a"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/tv_content"
                     app:layout_constraintStart_toEndOf="@id/tv_content" />
 

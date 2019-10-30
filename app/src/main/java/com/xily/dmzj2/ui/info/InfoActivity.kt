@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.transition.Transition
 import android.view.*
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -60,8 +61,29 @@ class InfoActivity : BaseActivity() {
             iv_cover.setImageBitmap(bitmap)
             iv_background.setImageBitmap(rsBulr(this, bitmap, 25f, 1f))
             isBitmapLoaded = true
+            //监听转场动画,等转场动画执行完再加载数据
+            window.sharedElementEnterTransition.addListener(object :
+                Transition.TransitionListener {
+                override fun onTransitionEnd(transition: Transition?) {
+                    loadData()
+                }
+
+                override fun onTransitionResume(transition: Transition?) {
+                }
+
+                override fun onTransitionPause(transition: Transition?) {
+                }
+
+                override fun onTransitionCancel(transition: Transition?) {
+                }
+
+                override fun onTransitionStart(transition: Transition?) {
+                }
+
+            })
+        } else {
+            loadData()
         }
-        loadData()
         var oldOffset = 0
         var critical = 300
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -171,6 +193,7 @@ class InfoActivity : BaseActivity() {
                             maxHeight = minHeight
                             iv_arrow_content.visibility = View.GONE
                         } else {
+                            iv_arrow_content.visibility = View.VISIBLE
                             tv_content.setOnClickListener {
                                 val valueAnimator = if (isContentExpand) {
                                     ValueAnimator.ofInt(maxHeight, minHeight)
@@ -216,7 +239,10 @@ class InfoActivity : BaseActivity() {
     }
 
     private fun initViewPager() {
-        viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
+        viewPager.adapter = object : FragmentPagerAdapter(
+            supportFragmentManager,
+            BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+        ) {
             val fragments = arrayOf(ChapterFragment.newInstance(), CommentFragment.newInstance())
             val titles = arrayOf("章节", "评论")
             override fun getItem(position: Int): Fragment {

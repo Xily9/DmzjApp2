@@ -1,15 +1,15 @@
 package com.xily.dmzj2.di.module
 
-import com.xily.dmzj2.ui.history.HistoryViewModel
 import com.xily.dmzj2.ui.info.InfoViewModel
 import com.xily.dmzj2.ui.login.LoginViewModel
-import com.xily.dmzj2.ui.main.HomeIndexViewModel
-import com.xily.dmzj2.ui.main.HomeLatestViewModel
 import com.xily.dmzj2.ui.main.MainViewModel
-import com.xily.dmzj2.ui.rank.HomeRankViewModel
+import com.xily.dmzj2.ui.main.history.HistoryViewModel
+import com.xily.dmzj2.ui.main.home.index.HomeIndexViewModel
+import com.xily.dmzj2.ui.main.home.latest.HomeLatestViewModel
+import com.xily.dmzj2.ui.main.home.rank.HomeRankViewModel
+import com.xily.dmzj2.ui.main.subscribe.SubscribeViewModel
 import com.xily.dmzj2.ui.read.ReadViewModel
 import com.xily.dmzj2.ui.search.SearchViewModel
-import com.xily.dmzj2.ui.subscribe.SubscribeViewModel
 import com.xily.dmzj2.ui.user.UserViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

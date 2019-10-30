@@ -22,6 +22,7 @@ class CommentFragment : BaseFragment() {
     private var time: Long = 0
     private var isLoading = true
     private var page = 1
+    private var isFirst = true
     override fun getLayoutId(): Int {
         return R.layout.layout_info_pager_comment
     }
@@ -34,7 +35,6 @@ class CommentFragment : BaseFragment() {
             page = 1
             loadData(true)
         }
-        loadData(true)
     }
 
     private fun initRecyclerView() {
@@ -79,6 +79,14 @@ class CommentFragment : BaseFragment() {
         }, finallyBlock = {
             if (isRefreshing) swipe.isRefreshing = false
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isFirst) {
+            isFirst = false
+            loadData(true)
+        }
     }
 
     private fun showLoading() {

@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.history
+package com.xily.dmzj2.ui.main.history
 
 import android.content.Intent
 import android.graphics.Bitmap

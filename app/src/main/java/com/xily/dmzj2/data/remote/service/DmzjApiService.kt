@@ -65,7 +65,7 @@ interface DmzjApiService {
     @GET(ApiConfig.dmzjApiUrl + "classify/{filter}/{type}/{page}.json")
     suspend fun getClassify(@Path("filter") filter: String, @Path("page") page: String): List<ClassifyBean>
 
-    @GET(ApiConfig.dmzjApiUrl + "recommend.json")
+    @GET(ApiConfig.dmzjApiUrl + "recommend_new.json")
     suspend fun getRecommend(): List<RecommendBean>
 
     @GET(ApiConfig.dmzjApiUrl + "recommend/batchUpdate")

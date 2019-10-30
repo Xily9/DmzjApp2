@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.rank
+package com.xily.dmzj2.ui.main.home.rank
 
 import android.content.res.ColorStateList
 import android.graphics.Color

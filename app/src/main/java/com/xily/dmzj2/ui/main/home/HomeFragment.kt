@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.main
+package com.xily.dmzj2.ui.main.home
 
 import android.os.Bundle
 import android.view.Menu
@@ -8,7 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseFragment
-import com.xily.dmzj2.ui.rank.HomeRankFragment
+import com.xily.dmzj2.ui.main.home.category.HomeCategoryFragment
+import com.xily.dmzj2.ui.main.home.index.HomeIndexFragment
+import com.xily.dmzj2.ui.main.home.latest.HomeLatestFragment
+import com.xily.dmzj2.ui.main.home.rank.HomeRankFragment
+import com.xily.dmzj2.ui.main.home.subject.HomeSubjectFragment
 import com.xily.dmzj2.ui.search.SearchActivity
 import com.xily.dmzj2.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_home.*

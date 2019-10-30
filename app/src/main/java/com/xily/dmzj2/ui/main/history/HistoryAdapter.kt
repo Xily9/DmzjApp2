@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.history
+package com.xily.dmzj2.ui.main.history
 
 import androidx.recyclerview.widget.DiffUtil
 import com.xily.dmzj2.R

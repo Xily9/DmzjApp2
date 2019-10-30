@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.main
+package com.xily.dmzj2.ui.main.home.category
 
 import android.os.Bundle
 import com.xily.dmzj2.R

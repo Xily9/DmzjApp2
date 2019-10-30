@@ -15,9 +15,10 @@ import com.google.android.material.navigation.NavigationView
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.xily.dmzj2.R
 import com.xily.dmzj2.base.BaseActivity
-import com.xily.dmzj2.ui.history.HistoryFragment
 import com.xily.dmzj2.ui.login.LoginActivity
-import com.xily.dmzj2.ui.subscribe.SubscribeFragment
+import com.xily.dmzj2.ui.main.history.HistoryFragment
+import com.xily.dmzj2.ui.main.home.HomeFragment
+import com.xily.dmzj2.ui.main.subscribe.SubscribeFragment
 import com.xily.dmzj2.ui.user.UserActivity
 import com.xily.dmzj2.utils.startActivity
 import com.xily.dmzj2.utils.toastInfo

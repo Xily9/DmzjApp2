@@ -15,6 +15,7 @@ import com.xily.dmzj2.base.BaseActivity
 import com.xily.dmzj2.data.remote.model.ComicBean
 import com.xily.dmzj2.utils.hideStatusBar
 import com.xily.dmzj2.utils.toast
+import com.xily.dmzj2.utils.toastError
 import kotlinx.android.synthetic.main.activity_read.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.coroutines.Dispatchers
@@ -61,11 +62,16 @@ class ReadActivity : BaseActivity() {
         }
         isLoading = true
         readViewModel.getChapter(comicId.toString(), chapterId.toString()).observe(this, Observer {
-            imageList.addAll(it.page_url)
-            chapterPosition.add(0)
-            adapter.notifyDataSetChanged()
-            recycle.scrollToPosition(page - 1)
-            isLoading = false
+            if (it != null) {
+                imageList.addAll(it.page_url)
+                chapterPosition.add(0)
+                adapter.notifyDataSetChanged()
+                recycle.scrollToPosition(page - 1)
+                isLoading = false
+            } else {
+                toastError("章节获取失败!")
+                finish()
+            }
         })
         getBatteryAndTime()
     }

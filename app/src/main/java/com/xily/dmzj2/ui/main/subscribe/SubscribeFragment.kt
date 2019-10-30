@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.subscribe
+package com.xily.dmzj2.ui.main.subscribe
 
 import android.content.Intent
 import android.graphics.Bitmap

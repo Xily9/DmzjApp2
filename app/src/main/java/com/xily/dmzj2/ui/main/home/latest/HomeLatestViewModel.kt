@@ -1,4 +1,4 @@
-package com.xily.dmzj2.ui.main
+package com.xily.dmzj2.ui.main.home.latest
 
 import com.xily.dmzj2.base.BaseViewModel
 import com.xily.dmzj2.data.DataManager
