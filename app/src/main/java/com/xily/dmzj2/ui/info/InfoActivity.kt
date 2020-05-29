@@ -120,7 +120,9 @@ class InfoActivity : BaseActivity() {
         })
         infoViewModel.chaptersBean.observe(this, Observer {
             it?.let {
-                chapters.addAll(it[0].data)
+                if (it.isNotEmpty()) {
+                    chapters.addAll(it[0].data)
+                }
             }
         })
     }
@@ -333,12 +335,12 @@ class InfoActivity : BaseActivity() {
     private fun showReInfo(reInfoBean: ReInfoBean) {
         tv_last_read.text = reInfoBean.chapter_name
         layout_last_read.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("comicId", id)
-            bundle.putInt("chapterId", reInfoBean.chapter_id)
-            bundle.putInt("page", reInfoBean.record)
-            bundle.putParcelableArrayList("chapters", chapters)
-            startActivity<ReadActivity>(bundle)
+            startActivity<ReadActivity>(
+                "comicId" to id,
+                "chapterId" to reInfoBean.chapter_id,
+                "page" to reInfoBean.record,
+                "chapters" to chapters
+            )
         }
     }
 

@@ -186,14 +186,10 @@ class HomeIndexFragment : BaseFragment() {
     private fun handleItemListener(item: RecommendBean.Data) {
         when (item.type) {
             0, 1 -> {
-                val bundle = Bundle()
-                bundle.putInt("id", item.id)
-                startActivity<InfoActivity>(bundle)
+                startActivity<InfoActivity>("id" to item.id)
             }
             7 -> {
-                val bundle = Bundle()
-                bundle.putString("url", item.url)
-                startActivity<BrowserActivity>(bundle)
+                startActivity<BrowserActivity>("url" to item.url)
             }
         }
     }

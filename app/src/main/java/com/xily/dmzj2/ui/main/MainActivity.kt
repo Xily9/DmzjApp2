@@ -40,6 +40,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
+        /*val activityThread =
+            Class.forName("android.app.ActivityThread").invokeMethod<Any>("currentActivityThread")!!
+        val handler = activityThread.getField<Handler>("mH")!!
+        handler.setField("mCallback", object : Handler.Callback {
+            override fun handleMessage(msg: Message): Boolean {
+                Log.d("RefHelper", msg.toString())
+                handler.handleMessage(msg)
+                return true
+            }
+        })*/
         mainViewModel = getViewModel()
         initToolBar()
         initNavigationView()

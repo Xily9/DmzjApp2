@@ -133,8 +133,7 @@ class ReadActivity : BaseActivity() {
     private fun initRecycleView() {
         recycle.layoutManager = LinearLayoutManager(this)
         adapter = ReadAdapter2(imageList)
-        adapter.setOnItemClickListener { position ->
-            //hideStatusBar(window,false)
+        recycle.onSingleTapListener = {
             if (toolbar.visibility == View.INVISIBLE) {
                 toolbar.visibility = View.VISIBLE
                 //给recyclerView设置marginTop,防止toolbar挡住图片

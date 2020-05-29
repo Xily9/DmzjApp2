@@ -8,7 +8,7 @@ import com.xily.dmzj2.data.db.entity.SearchHistory
 /**
  * Created by Xily on 2019/10/5.
  */
-@Database(entities = [SearchHistory::class], version = 2)
+@Database(entities = [SearchHistory::class], version = 2, exportSchema = false)
 abstract class RoomDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
 }

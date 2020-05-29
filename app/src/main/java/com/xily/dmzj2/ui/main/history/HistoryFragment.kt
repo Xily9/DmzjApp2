@@ -50,11 +50,11 @@ class HistoryFragment : BaseFragment() {
         }
         adapter.buttonClickListener = {
             val historyBean = adapter.currentList.get(it)
-            val bundle = Bundle()
-            bundle.putInt("comicId", historyBean.comic_id)
-            bundle.putInt("chapterId", historyBean.chapter_id)
-            bundle.putInt("page", historyBean.record)
-            startActivity<ReadActivity>(bundle)
+            startActivity<ReadActivity>(
+                "comicId" to historyBean.comic_id,
+                "chapterId" to historyBean.chapter_id,
+                "page" to historyBean.record
+            )
         }
         recycle.adapter = adapter
     }

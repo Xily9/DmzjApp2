@@ -69,15 +69,12 @@ class ChapterFragment : BaseFragment() {
         }
         adapter.headerView = headerView
         adapter.listener = { chapterId, chapterIndex, chapterPosition ->
-            val bundle = Bundle()
-            bundle.putInt("comicId", infoViewModel.comicId)
-            bundle.putInt("chapterId", chapterId)
-            bundle.putInt(
-                "position",
-                if (isAscending) chapters[chapterIndex].data.size - 1 - chapterPosition else chapterPosition
+            startActivity<ReadActivity>(
+                "comicId" to infoViewModel.comicId,
+                "chapterId" to chapterId,
+                "position" to if (isAscending) chapters[chapterIndex].data.size - 1 - chapterPosition else chapterPosition,
+                "chapters" to ArrayList(chapters[chapterIndex].data)
             )
-            bundle.putParcelableArrayList("chapters", ArrayList(chapters[chapterIndex].data))
-            startActivity<ReadActivity>(bundle)
         }
         recycle_chapter.adapter = adapter
         //recycle_chapter.isNestedScrollingEnabled = false
